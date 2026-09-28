@@ -1,0 +1,35 @@
+[
+  {
+    "id": "USR-001",
+    "name": "Alex Admin",
+    "email": "admin@loop.demo",
+    "password": "$2b$12$iaJaZd16lCGPV0f/EqCB.e.IASCeGJFBNB8O7yq3x2v5Bcq/LVLNS",
+    "role": "ADMIN",
+    "workspaceId": "WS-001"
+  },
+  {
+    "id": "USR-002",
+    "name": "Maya Manager",
+    "email": "manager@loop.demo",
+    "password": "$2b$12$hwxk/iM0OY8J5PZhN2HEX.eIDxOoydD0MWBk8Qt6wBD3Vl1AbHwpO",
+    "role": "MANAGER",
+    "workspaceId": "WS-001"
+  },
+  {
+    "id": "USR-003",
+    "name": "Ryan Analyst",
+    "email": "analyst@loop.demo",
+    "password": "$2b$12$UCIIcYa0yOpxsSwWEPx2KOYlP7ZxzGcyGNYMqn/ifa/69CYU02ENy",
+    "role": "ANALYST",
+    "workspaceId": "WS-001"
+  },
+  {
+    "id": "USR-004",
+    "name": "Second Workspace Admin",
+    "email": "admin2@loop.demo",
+    "password": "$2b$12$SEd1sgziyFiXAEDkEtqAIO0PZ3zdWWTvvu4SPGWUxyTvy2kolBHhC",
+    "role": "ADMIN",
+    "workspaceId": "WS-002"
+  }
+]
+

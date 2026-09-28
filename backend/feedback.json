@@ -1,0 +1,80 @@
+{
+  "addedFeedback": [
+    {
+      "id": "FB-1790350108622",
+      "text": "The onboarding instructions are confusing and need improvement.",
+      "channel": "Support",
+      "theme": "Onboarding",
+      "sentiment": "Negative",
+      "status": "NEW",
+      "createdAt": "2026-09-25T15:28:28.622Z"
+    },
+    {
+      "id": "FB-1790351067007",
+      "text": "The onboarding instructions are much clearer now, but the invite process could still be improved.",
+      "channel": "Support",
+      "theme": "Onboarding",
+      "sentiment": "Neutral",
+      "status": "NEW",
+      "createdAt": "2026-09-25T15:44:27.007Z"
+    },
+    {
+      "id": "FB-1790435673693",
+      "text": "The new feedback dashboard is very useful.",
+      "channel": "Support",
+      "theme": "Dashboard",
+      "sentiment": "Positive",
+      "status": "NEW",
+      "workspaceId": "WS-001"
+    },
+    {
+      "id": "FB-1790441547953",
+      "text": "Feedback from Workspace 2.",
+      "channel": "Support",
+      "theme": "Testing",
+      "sentiment": "Positive",
+      "status": "ACTIONED",
+      "workspaceId": "WS-002",
+      "date": "2026-09-26T16:52:27.954Z"
+    },
+    {
+      "id": "FB-1790452649946",
+      "text": "Workspace 2 testing feedback",
+      "channel": "Support",
+      "theme": "General",
+      "sentiment": "Positive",
+      "status": "NEW",
+      "workspaceId": "WS-002",
+      "date": "2026-09-26T19:57:29.972Z"
+    },
+    {
+      "id": "FB-WS2-003",
+      "text": "The dashboard is slow and difficult to use.",
+      "channel": "Support",
+      "theme": "Dashboard",
+      "sentiment": "Negative",
+      "status": "NEW",
+      "workspaceId": "WS-002",
+      "date": "2026-09-28T10:00:00.000Z"
+    },
+    {
+      "id": "FB-1790615773487",
+      "text": "The pricing page is difficult to understand.",
+      "channel": "Support",
+      "theme": "Billing",
+      "sentiment": "Negative",
+      "status": "NEW",
+      "workspaceId": "WS-002",
+      "date": "2026-09-28T17:16:13.488Z"
+    }
+  ],
+  "statusOverrides": {
+    "1": "ACTIONED",
+    "3": "REVIEWED",
+    "93": "REVIEWED",
+    "99": "REVIEWED",
+    "105": "NEW",
+    "117": "NEW",
+    "FB-1790441547953": "ACTIONED"
+  }
+}
