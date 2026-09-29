@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Login from "./Login";
 
-const API_URL = "/api";
-
+const API_URL = "";
 function App() {
 const [isLoggedIn, setIsLoggedIn] = useState(
   !!localStorage.getItem("loopToken")
