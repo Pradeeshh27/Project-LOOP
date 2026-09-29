@@ -89,8 +89,8 @@ app.get("/", (req, res) => {
 });
 
 // Authentication - Login
-app.post("/auth/login", async (req, res) => {
-    try {
+app.post("/api/auth/login", async (req, res) => {
+      try {
     const { email, password } = req.body;
 
     if (!email || !password) {
