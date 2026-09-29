@@ -27,7 +27,7 @@
     "id": "USR-004",
     "name": "Second Workspace Admin",
     "email": "admin2@loop.demo",
-    "password": "$2b$12$SEd1sgziyFiXAEDkEtqAIO0PZ3zdWWTvvu4SPGWUxyTvy2kolBHhC",
+    "password": "$2b$12$pDmd/KzJw7RbTpsA6hI1Ie3pJSvtwGcs4QzIr2ws0vA9xM76J0FFW",
     "role": "ADMIN",
     "workspaceId": "WS-002"
   }
