@@ -102,6 +102,8 @@ app.post("/api/auth/login", async (req, res) => {
 
     const users = loadUsers();
 
+    console.log("Users:", users);
+    console.log("Login email:", email);
     const user = users.find(
       (item) => item.email.toLowerCase() === email.toLowerCase()
     );
