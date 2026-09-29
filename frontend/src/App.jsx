@@ -35,7 +35,7 @@ const handleLogin = () => {
   }
 
   try {
-    const response = await fetch(`${API_URL}/api/feedback`, {
+    const response = await fetch(`${API_URL}/feedback`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +96,7 @@ const handleLogin = () => {
 });
  
   useEffect(() => {
-  fetch(`${API_URL}/api/health`)
+  fetch(`${API_URL}/health`)
     .then((response) => response.json())
     .then((data) => {
       setBackendStatus(data.status === "ok" ? "Connected" : "Error");
@@ -116,7 +116,7 @@ useEffect(() => {
 
   console.log("SUMMARY TOKEN:", token);
 
-  fetch(`${API_URL}/api/feedback/summary`, {
+  fetch(`${API_URL}/feedback/summary`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -141,7 +141,7 @@ useEffect(() => {
   const token = localStorage.getItem("loopToken");
 
   fetch(
-    `${API_URL}/api/feedback?page=${currentPage}&limit=10&channel=${channel === "All" ? "" : channel}&sentiment=${sentiment === "All" ? "" : sentiment}&status=${status === "All" ? "" : status}&theme=${theme === "All" ? "" : theme}&search=${encodeURIComponent(search)}`,
+    `${API_URL}/feedback?page=${currentPage}&limit=10&channel=${channel === "All" ? "" : channel}&sentiment=${sentiment === "All" ? "" : sentiment}&status=${status === "All" ? "" : status}&theme=${theme === "All" ? "" : theme}&search=${encodeURIComponent(search)}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -177,7 +177,7 @@ useEffect(() => {
   const token = localStorage.getItem("loopToken");
 
   fetch(
-    `${API_URL}/api/feedback?limit=100&theme=${encodeURIComponent(
+    `${API_URL}/feedback?limit=100&theme=${encodeURIComponent(
       selectedTheme
     )}`,
     {
@@ -683,7 +683,7 @@ const handleLogout = () => {
 
   try {
     const response = await fetch(
-      `${API_URL}/api/feedback/${id}/status`,
+      `${API_URL}/feedback/${id}/status`
       {
         method: "PATCH",
         headers: {
@@ -730,7 +730,7 @@ const askLoop = async () => {
   try {
     const token = localStorage.getItem("loopToken");
 
-const response = await fetch(`${API_URL}/api/ai/ask`, {
+const response = await fetch(`${API_URL}/ai/ask`, {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -767,7 +767,7 @@ const generateReport = async () => {
   setReportGenerated(true);
 
   try {
-    const response = await fetch(`${API_URL}/api/ai/report`, {
+    const response = await fetch(`${API_URL}/ai/report`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
