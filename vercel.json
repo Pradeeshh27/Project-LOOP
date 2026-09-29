@@ -10,18 +10,18 @@
       "framework": "express"
     }
   },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": {
-        "service": "backend"
-      }
-    },
-    {
-      "source": "/(.*)",
-      "destination": {
-        "service": "frontend"
-      }
+ "rewrites": [
+  {
+    "source": "/api/(.*)",
+    "destination": {
+      "service": "backend"
     }
-  ]
+  },
+  {
+    "source": "/(.*)",
+    "destination": {
+      "service": "frontend"
+    }
+  }
+]
 }
