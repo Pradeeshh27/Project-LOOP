@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Login from "./Login";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "/api";
 
 function App() {
 const [isLoggedIn, setIsLoggedIn] = useState(
