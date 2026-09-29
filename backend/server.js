@@ -33,17 +33,27 @@ if (fs.existsSync(feedbackFile)) {
 }
 
 function saveFeedbackStorage() {
-  fs.writeFileSync(
-    feedbackFile,
-    JSON.stringify(
-      {
-        addedFeedback,
-        statusOverrides,
-      },
-      null,
-      2
-    )
-  );
+  // Vercel serverless functions do not provide
+  // a persistent writable project filesystem.
+  if (process.env.VERCEL) {
+    return;
+  }
+
+  try {
+    fs.writeFileSync(
+      feedbackFile,
+      JSON.stringify(
+        {
+          addedFeedback,
+          statusOverrides,
+        },
+        null,
+        2
+      )
+    );
+  } catch (error) {
+    console.error("Could not save feedback storage:", error);
+  }
 }
 
 const usersFile = path.join(__dirname, "users.json");
