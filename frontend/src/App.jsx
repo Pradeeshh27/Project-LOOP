@@ -683,9 +683,9 @@ const handleLogout = () => {
 
   try {
     const response = await fetch(
-      `${API_URL}/feedback/${id}/status`
-      {
-        method: "PATCH",
+  `${API_URL}/feedback/${id}/status`,
+  {
+    method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
