@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API_URL = "";
+const API_URL = "/api";
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState("");
