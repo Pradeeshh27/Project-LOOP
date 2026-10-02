@@ -140,6 +140,10 @@ useEffect(() => {
 useEffect(() => {
   const token = localStorage.getItem("loopToken");
 
+  if (!token) {
+    return;
+  }
+
   fetch(
     `${API_URL}/feedback?page=${currentPage}&limit=10&channel=${channel === "All" ? "" : channel}&sentiment=${sentiment === "All" ? "" : sentiment}&status=${status === "All" ? "" : status}&theme=${theme === "All" ? "" : theme}&search=${encodeURIComponent(search)}`,
     {
@@ -166,7 +170,7 @@ useEffect(() => {
       setFeedback([]);
       setTotalPages(1);
     });
-}, [currentPage, search, channel, sentiment, status, theme]);
+}, [isLoggedIn, currentPage, search, channel, sentiment, status, theme]);
 
 useEffect(() => {
   if (!selectedTheme) {
