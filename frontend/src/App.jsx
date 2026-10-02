@@ -134,7 +134,7 @@ useEffect(() => {
     .catch((error) => {
       console.error("Failed to load summary:", error);
     });
-}, []);
+}, [isLoggedIn]);
 
 
 useEffect(() => {
