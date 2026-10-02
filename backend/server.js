@@ -765,127 +765,169 @@ app.post("/api/ai/ask", authenticateToken, async (req, res) => {
   }
 });
 
-app.post("/api/ai/report", async (req, res) => {
+app.post("/api/ai/report", authenticateToken, async (req, res) => {
   try {
-const feedbackResponse = await fetch(
-  "http://127.0.0.1:5000/api/feedback?limit=100",
-  {
-    headers: {
-      Authorization: req.headers.authorization,
-    },
-  }
-);
-
-    if (!feedbackResponse.ok) {
-      throw new Error("Failed to load feedback");
-    }
-
-    const feedbackData = await feedbackResponse.json();
-    const feedback = feedbackData.data || [];
-
-    if (feedback.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: "No feedback available",
-      });
-    }
-
- const context = feedback
-  .slice(0, 30)
-  .map(
-    (item) =>
-      `Theme: ${item.theme}
-Sentiment: ${item.sentiment}
-Channel: ${item.channel}
-Feedback: ${item.text}`
-  )
-  .join("\n\n");
-
-    const prompt = `
-You are LOOP, an AI customer feedback intelligence platform.
-
-Analyze ONLY the customer feedback provided below.
-
-Create a concise monthly customer voice report.
-
-Return ONLY valid JSON in exactly this structure:
-
-{
-  "topTheme": "string",
-  "sentiment": "string",
-  "keySignal": "string",
-  "themes": [
-    "string",
-    "string",
-    "string",
-    "string"
-  ],
-  "actions": [
-    "string",
-    "string",
-    "string",
-    "string"
-  ]
-}
-
-Rules:
-- Do not invent information.
-- Use only evidence from the feedback.
-- topTheme should be the theme appearing most significantly in the feedback.
-- sentiment should summarize the overall sentiment.
-- keySignal should describe the most important customer signal.
-- themes should contain exactly 4 concise observations.
-- actions should contain exactly 4 practical actions supported by the feedback.
-- Do not include markdown.
-- Return JSON only.
-
-Customer feedback:
-
-${context}
-`;
-
-    const ollamaResponse = await fetch(
-      "http://127.0.0.1:11434/api/generate",
+    const feedback = [
       {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      body: JSON.stringify({
-  model: "llama3.2:3b",
-  prompt,
-  stream: false,
-  options: {
-    num_predict: 300,
-    temperature: 0.2,
-  },
-}),
-      }
-    );
+        id: 1,
+        text: "Onboarding took forever — I couldn't figure out how to invite my team.",
+        channel: "Support",
+        sentiment: "Negative",
+        theme: "Onboarding",
+        status: "NEW",
+        workspaceId: "WS-001",
+      },
+      {
+        id: 2,
+        text: "The new dashboard is gorgeous and finally fast. Huge improvement.",
+        channel: "App Store",
+        sentiment: "Positive",
+        theme: "Dashboard",
+        status: "REVIEWED",
+        workspaceId: "WS-001",
+      },
+      {
+        id: 3,
+        text: "It does the job, but the mobile experience needs work.",
+        channel: "NPS Survey",
+        sentiment: "Neutral",
+        theme: "Mobile Experience",
+        status: "NEW",
+        workspaceId: "WS-001",
+      },
+      {
+        id: 4,
+        text: "Prospect wants SSO before they'll sign — third time this month.",
+        channel: "Sales Note",
+        sentiment: "Negative",
+        theme: "Security",
+        status: "ACTIONED",
+        workspaceId: "WS-001",
+      },
+      {
+        id: 5,
+        text: "Love the new export feature, saved me an hour today.",
+        channel: "Community",
+        sentiment: "Positive",
+        theme: "Export",
+        status: "REVIEWED",
+        workspaceId: "WS-001",
+      },
+    ];
 
-    if (!ollamaResponse.ok) {
-      throw new Error(`Ollama returned ${ollamaResponse.status}`);
-    }
+    const templates = [
+      ["Onboarding", "Support", "Negative", "The onboarding process was confusing and took too long."],
+      ["Onboarding", "NPS Survey", "Negative", "I had trouble understanding how to invite my teammates."],
+      ["Onboarding", "Community", "Neutral", "Setup was okay, but the onboarding guide could be clearer."],
+      ["Dashboard", "App Store", "Positive", "The dashboard loads quickly and is easy to understand."],
+      ["Dashboard", "Support", "Positive", "The redesigned dashboard is much easier to navigate."],
+      ["Dashboard", "NPS Survey", "Neutral", "The dashboard is useful but could offer more customization."],
+      ["Mobile Experience", "App Store", "Negative", "The mobile experience feels slow compared with desktop."],
+      ["Mobile Experience", "Support", "Negative", "Some buttons are difficult to use on a phone."],
+      ["Mobile Experience", "NPS Survey", "Neutral", "The mobile layout works but needs some improvements."],
+      ["Billing", "Support", "Negative", "The billing page sometimes takes too long to load."],
+      ["Billing", "Support", "Negative", "I had trouble downloading my invoice."],
+      ["Billing", "NPS Survey", "Neutral", "Billing information could be easier to find."],
+      ["Security", "Sales Note", "Negative", "The customer asked for SSO before moving forward."],
+      ["Security", "Support", "Positive", "The security controls give our team confidence."],
+      ["Security", "NPS Survey", "Neutral", "More security documentation would be helpful."],
+      ["Search", "App Store", "Positive", "Search is much faster after the latest update."],
+      ["Search", "Support", "Neutral", "Search works well but could handle more filters."],
+      ["Export", "Community", "Positive", "The export feature saved me a lot of time."],
+      ["Export", "Support", "Positive", "Exporting reports is simple and reliable."],
+      ["Documentation", "Community", "Neutral", "The API documentation needs more examples."],
+      ["Documentation", "Support", "Negative", "I could not find the documentation for this feature."],
+      ["Performance", "App Store", "Positive", "The application feels noticeably faster."],
+      ["Performance", "Support", "Negative", "Some pages still take too long to load."],
+      ["Performance", "NPS Survey", "Neutral", "Performance is good most of the time."],
+    ];
 
-    const ollamaData = await ollamaResponse.json();
+    for (let i = 6; i <= 125; i++) {
+      const template = templates[(i - 6) % templates.length];
 
-    let report;
-
-    try {
-      report = JSON.parse(ollamaData.response.trim());
-    } catch (parseError) {
-      console.error("Report JSON parse error:", parseError);
-      console.error("Ollama response:", ollamaData.response);
-
-      return res.status(500).json({
-        success: false,
-        error: "LOOP returned an invalid report",
+      feedback.push({
+        id: i,
+        text: template[3],
+        channel: template[1],
+        sentiment: template[2],
+        theme: template[0],
+        status: i % 3 === 0 ? "ACTIONED" : i % 2 === 0 ? "REVIEWED" : "NEW",
+        workspaceId: "WS-001",
       });
     }
+
+    feedback.push(...addedFeedback);
+
+    feedback.forEach((item) => {
+      if (statusOverrides[item.id]) {
+        item.status = statusOverrides[item.id];
+      }
+    });
+
+    const themeCounts = {};
+    const sentimentCounts = {
+      Positive: 0,
+      Neutral: 0,
+      Negative: 0,
+    };
+
+    feedback.forEach((item) => {
+      themeCounts[item.theme] = (themeCounts[item.theme] || 0) + 1;
+
+      if (sentimentCounts[item.sentiment] !== undefined) {
+        sentimentCounts[item.sentiment]++;
+      }
+    });
+
+    const topTheme = Object.entries(themeCounts)
+      .sort((a, b) => b[1] - a[1])[0];
+
+    const overallSentiment =
+      sentimentCounts.Positive > sentimentCounts.Negative
+        ? "Mostly Positive"
+        : sentimentCounts.Negative > sentimentCounts.Positive
+        ? "Mostly Negative"
+        : "Mixed";
+
+    const themes = Object.entries(themeCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4)
+      .map(([theme, count]) => `${theme} appears in ${count} customer feedback items.`);
+
+    while (themes.length < 4) {
+      themes.push("Additional customer feedback themes are being monitored.");
+    }
+
+    const negativeThemes = Object.entries(
+      feedback
+        .filter((item) => item.sentiment === "Negative")
+        .reduce((acc, item) => {
+          acc[item.theme] = (acc[item.theme] || 0) + 1;
+          return acc;
+        }, {})
+    ).sort((a, b) => b[1] - a[1]);
+
+    const actions = [
+      "Prioritize improvements to the most frequently mentioned customer theme.",
+      "Review negative feedback related to onboarding and usability.",
+      "Continue monitoring security requests such as SSO.",
+      "Maintain the improvements customers are responding positively to.",
+    ];
+
+    const keySignal =
+      negativeThemes.length > 0
+        ? `${negativeThemes[0][0]} is the most prominent negative-feedback theme.`
+        : "Customer feedback shows several recurring product themes.";
 
     res.json({
       success: true,
-      report,
+      report: {
+        topTheme: topTheme ? topTheme[0] : "General",
+        sentiment: overallSentiment,
+        keySignal,
+        themes,
+        actions,
+      },
     });
   } catch (error) {
     console.error("Report generation error:", error);
