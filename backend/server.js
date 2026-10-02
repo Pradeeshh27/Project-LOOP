@@ -555,8 +555,7 @@ app.patch("/api/feedback/:id/status", authenticateToken, (req, res) => {
     });
   }
 });
-
-app.post("/api/ai/ask", async (req, res) => {
+app.post("/api/ai/ask", authenticateToken, async (req, res) => {
   try {
     const { question } = req.body;
 
@@ -567,45 +566,114 @@ app.post("/api/ai/ask", async (req, res) => {
       });
     }
 
-    // Get feedback from backend
- const authHeader = req.headers.authorization;
+    // Build the same feedback dataset used by /api/feedback
+    const feedback = [
+      {
+        id: 1,
+        text: "Onboarding took forever — I couldn't figure out how to invite my team.",
+        channel: "Support",
+        sentiment: "Negative",
+        theme: "Onboarding",
+        status: "NEW",
+        workspaceId: "WS-001",
+      },
+      {
+        id: 2,
+        text: "The new dashboard is gorgeous and finally fast. Huge improvement.",
+        channel: "App Store",
+        sentiment: "Positive",
+        theme: "Dashboard",
+        status: "REVIEWED",
+        workspaceId: "WS-001",
+      },
+      {
+        id: 3,
+        text: "It does the job, but the mobile experience needs work.",
+        channel: "NPS Survey",
+        sentiment: "Neutral",
+        theme: "Mobile Experience",
+        status: "NEW",
+        workspaceId: "WS-001",
+      },
+      {
+        id: 4,
+        text: "Prospect wants SSO before they'll sign — third time this month.",
+        channel: "Sales Note",
+        sentiment: "Negative",
+        theme: "Security",
+        status: "ACTIONED",
+        workspaceId: "WS-001",
+      },
+      {
+        id: 5,
+        text: "Love the new export feature, saved me an hour today.",
+        channel: "Community",
+        sentiment: "Positive",
+        theme: "Export",
+        status: "REVIEWED",
+        workspaceId: "WS-001",
+      },
+    ];
 
-const feedbackResponse = await fetch(
-  "http://127.0.0.1:5000/api/feedback?limit=100",
-  {
-    headers: {
-      Authorization: authHeader,
-    },
-  }
-);
+    const templates = [
+      ["Onboarding", "Support", "Negative", "The onboarding process was confusing and took too long."],
+      ["Onboarding", "NPS Survey", "Negative", "I had trouble understanding how to invite my teammates."],
+      ["Onboarding", "Community", "Neutral", "Setup was okay, but the onboarding guide could be clearer."],
+      ["Dashboard", "App Store", "Positive", "The dashboard loads quickly and is easy to understand."],
+      ["Dashboard", "Support", "Positive", "The redesigned dashboard is much easier to navigate."],
+      ["Dashboard", "NPS Survey", "Neutral", "The dashboard is useful but could offer more customization."],
+      ["Mobile Experience", "App Store", "Negative", "The mobile experience feels slow compared with desktop."],
+      ["Mobile Experience", "Support", "Negative", "Some buttons are difficult to use on a phone."],
+      ["Mobile Experience", "NPS Survey", "Neutral", "The mobile layout works but needs some improvements."],
+      ["Billing", "Support", "Negative", "The billing page sometimes takes too long to load."],
+      ["Billing", "Support", "Negative", "I had trouble downloading my invoice."],
+      ["Billing", "NPS Survey", "Neutral", "Billing information could be easier to find."],
+      ["Security", "Sales Note", "Negative", "The customer asked for SSO before moving forward."],
+      ["Security", "Support", "Positive", "The security controls give our team confidence."],
+      ["Security", "NPS Survey", "Neutral", "More security documentation would be helpful."],
+      ["Search", "App Store", "Positive", "Search is much faster after the latest update."],
+      ["Search", "Support", "Neutral", "Search works well but could handle more filters."],
+      ["Export", "Community", "Positive", "The export feature saved me a lot of time."],
+      ["Export", "Support", "Positive", "Exporting reports is simple and reliable."],
+      ["Documentation", "Community", "Neutral", "The API documentation needs more examples."],
+      ["Documentation", "Support", "Negative", "I could not find the documentation for this feature."],
+      ["Performance", "App Store", "Positive", "The application feels noticeably faster."],
+      ["Performance", "Support", "Negative", "Some pages still take too long to load."],
+      ["Performance", "NPS Survey", "Neutral", "Performance is good most of the time."],
+    ];
 
-   if (!feedbackResponse.ok) {
-  const errorText = await feedbackResponse.text();
+    for (let i = 6; i <= 125; i++) {
+      const template = templates[(i - 6) % templates.length];
 
-  console.error(
-    "Ask LOOP feedback request failed:",
-    feedbackResponse.status,
-    errorText
-  );
+      feedback.push({
+        id: i,
+        text: template[3],
+        channel: template[1],
+        sentiment: template[2],
+        theme: template[0],
+        status: i % 3 === 0 ? "ACTIONED" : i % 2 === 0 ? "REVIEWED" : "NEW",
+        workspaceId: "WS-001",
+      });
+    }
 
-  throw new Error(
-    `Failed to load feedback (${feedbackResponse.status})`
-  );
-}
+    // Include manually added feedback
+    feedback.push(...addedFeedback);
 
-    const feedbackData = await feedbackResponse.json();
-    const allFeedback = feedbackData.data || [];
+    // Apply saved status changes
+    feedback.forEach((item) => {
+      if (statusOverrides[item.id]) {
+        item.status = statusOverrides[item.id];
+      }
+    });
 
-    // Identify question type
     const questionLower = question.toLowerCase();
 
     const isComplaintQuestion =
-  questionLower.includes("complaint") ||
-  questionLower.includes("problem") ||
-  questionLower.includes("issue") ||
-  questionLower.includes("negative") ||
-  questionLower.includes("pain point") ||
-  questionLower.includes("complaints");
+      questionLower.includes("complaint") ||
+      questionLower.includes("problem") ||
+      questionLower.includes("issue") ||
+      questionLower.includes("negative") ||
+      questionLower.includes("pain point");
 
     const isPositiveQuestion =
       questionLower.includes("like") ||
@@ -613,13 +681,12 @@ const feedbackResponse = await fetch(
       questionLower.includes("positive") ||
       questionLower.includes("love");
 
-    // Create keywords
     const keywords = questionLower
       .split(/\s+/)
+      .map((word) => word.replace(/[^a-z0-9]/g, ""))
       .filter((word) => word.length > 2);
 
-    // Score feedback
-    const scoredFeedback = allFeedback.map((item) => {
+    const scoredFeedback = feedback.map((item) => {
       const text =
         `${item.text} ${item.theme} ${item.sentiment} ${item.channel}`.toLowerCase();
 
@@ -645,81 +712,47 @@ const feedbackResponse = await fetch(
       };
     });
 
-    // Get relevant feedback
     const relevantFeedback = scoredFeedback
       .filter((item) => item.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 10);
 
-    // Remove duplicates
-    const uniqueFeedback = Array.from(
-      new Map(
-        relevantFeedback.map((item) => [
-          `${item.theme}-${item.text}`,
-          item,
-        ])
-      ).values()
-    );
-
     const sources =
-      uniqueFeedback.length > 0
-        ? uniqueFeedback
-        : allFeedback.slice(0, 10);
+      relevantFeedback.length > 0
+        ? relevantFeedback
+        : feedback.slice(0, 10);
 
-    // Build context for Ollama
-    const context = sources
-      .map(
-        (item) =>
-          `Theme: ${item.theme}
-Sentiment: ${item.sentiment}
-Channel: ${item.channel}
-Feedback: ${item.text}`
-      )
-      .join("\n\n");
+    // Generate a useful response without relying on Ollama or another external AI service.
+    const negative = sources.filter(
+      (item) => item.sentiment === "Negative"
+    ).length;
 
-    const prompt = `
-You are LOOP, an AI customer feedback intelligence assistant.
+    const positive = sources.filter(
+      (item) => item.sentiment === "Positive"
+    ).length;
 
-Answer the user's question using ONLY the customer feedback provided below.
+    const themes = {};
 
-Do not invent information.
-Do not make claims that are not supported by the feedback.
-If the feedback does not contain enough information, clearly say that.
+    sources.forEach((item) => {
+      themes[item.theme] = (themes[item.theme] || 0) + 1;
+    });
 
-User question:
-${question}
+    const topTheme = Object.entries(themes)
+      .sort((a, b) => b[1] - a[1])[0];
 
-Customer feedback:
-${context}
+    let answer;
 
-Give a concise and useful answer.
-`;
-
-    // Send to Ollama
-    const ollamaResponse = await fetch(
-      "http://127.0.0.1:11434/api/generate",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model: "llama3.2:3b",
-          prompt,
-          stream: false,
-        }),
-      }
-    );
-
-    if (!ollamaResponse.ok) {
-      throw new Error(`Ollama returned ${ollamaResponse.status}`);
+    if (isComplaintQuestion || questionLower.includes("pain point")) {
+      answer = `I found ${negative} negative feedback items among the most relevant results. The main area mentioned is ${topTheme ? topTheme[0] : "customer experience"}. Common concerns include usability, clarity, and performance.`;
+    } else if (isPositiveQuestion) {
+      answer = `I found ${positive} positive feedback items among the most relevant results. Customers particularly responded positively to areas such as ${topTheme ? topTheme[0] : "product improvements"}.`;
+    } else {
+      answer = `Based on the available customer feedback, the most relevant theme is ${topTheme ? topTheme[0] : "general feedback"}. I found ${sources.length} relevant feedback items, including ${positive} positive and ${negative} negative responses.`;
     }
-
-    const ollamaData = await ollamaResponse.json();
 
     res.json({
       success: true,
-      answer: ollamaData.response.trim(),
+      answer,
       sources,
     });
   } catch (error) {
