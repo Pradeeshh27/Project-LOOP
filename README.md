@@ -1,89 +1,145 @@
-# Project LOOP — AI Customer Feedback Intelligence Platform
+# LOOP — AI Customer Feedback Intelligence Platform
 
-Project LOOP is an AI-powered customer feedback intelligence platform designed to help teams collect, explore, analyze, and act on customer feedback from multiple channels.
+LOOP is an AI-powered customer feedback intelligence platform that transforms scattered customer feedback into actionable insights.
 
-The platform provides a centralized feedback dashboard with sentiment analysis, themes, filtering, feedback status management, an AI-powered "Ask LOOP" assistant, and customer voice report generation.
-
-## Live Demo
-
-Production URL:
-
-https://project-loop-ai-ten.vercel.app
-
-### Demo Login
-
-Admin:
-
-- Email: `admin2@loop.demo`
-- Password: `Admin@123`
-
-Other seeded roles:
-
-- Manager: `manager@loop.demo`
-- Analyst: `analyst@loop.demo`
-
-> Demo credentials are provided for evaluation purposes.
+It helps teams understand what customers are saying, identify recurring themes, analyze sentiment, ask questions about feedback using natural language, and generate evidence-backed customer voice reports.
 
 ---
 
-## Features
+## 🚀 Live Demo
 
-### Authentication
+**Production:**  
+https://project-loop-ai-ten.vercel.app
 
+**GitHub Repository:**  
+https://github.com/Pradeeshh27/Project-LOOP
+
+---
+
+## 📌 Project Overview
+
+Customer feedback is often distributed across multiple sources and can be difficult to analyze manually.
+
+LOOP brings customer feedback into one interface and provides:
+
+- Feedback management
+- Sentiment analysis
+- Theme identification
+- Feedback filtering and search
+- AI-powered questions and answers
+- Evidence-backed responses
+- AI-generated customer voice reports
+- Dashboard-level customer insights
+
+The goal is to help product and customer teams move from raw feedback to clear, actionable insights.
+
+---
+
+## ✨ Key Features
+
+### 🔐 Authentication
+
+- Secure login interface
+- Email and password authentication
 - JWT-based authentication
-- Role-based users
-- Admin, Manager, and Analyst roles
-- Protected API endpoints
+- Protected application routes
 
-### Feedback Dashboard
+### 📊 Dashboard
 
-- View customer feedback
-- Pagination
-- Search feedback
-- Filter by:
-  - Channel
-  - Sentiment
-  - Status
-  - Theme
-- View feedback statistics
-- Update feedback status
+The dashboard provides an overview of customer feedback through:
 
-### Customer Feedback Intelligence
+- Total feedback
+- Negative feedback percentage
+- New feedback
+- Active themes
+- Feedback volume
+- Sentiment breakdown
 
-- Positive, Neutral, and Negative sentiment tracking
-- Theme analysis
-- Top feedback themes
-- Feedback volume tracking
-- Summary statistics
+### 📥 Feedback Inbox
 
-### Ask LOOP
+Users can explore customer feedback and filter it by:
 
-Ask natural-language questions about customer feedback.
+- Channel
+- Sentiment
+- Status
+- Theme
+- Search keywords
 
-Examples:
+Feedback status can also be updated as part of the workflow.
 
-- "What are the main complaints?"
-- "What do customers like?"
-- "What are the biggest problems?"
-- "Which areas need improvement?"
+### 📈 Trends & Themes
 
-LOOP retrieves relevant feedback and provides an evidence-based response.
+LOOP organizes customer feedback into recurring themes and helps identify patterns across the dataset.
 
-### Generate Report
+Examples include:
 
-The Generate Report feature creates a customer voice report containing:
+- Onboarding
+- Dashboard
+- Mobile Experience
+- Billing
+- Security
+- Search
+- Export
+- Documentation
+- Performance
+
+### 🤖 Ask LOOP
+
+Ask LOOP allows users to ask natural-language questions about customer feedback.
+
+Example:
+
+> What are the main complaints?
+
+LOOP analyzes relevant feedback and returns an answer supported by customer feedback evidence.
+
+The response also displays the underlying feedback used to generate the answer.
+
+### 📄 Customer Voice Reports
+
+The Reports section generates an AI-assisted customer voice report containing:
 
 - Top theme
 - Overall sentiment
 - Key customer signal
-- Major feedback themes
+- Key customer themes
 - Recommended actions
 
-The report is generated from the seeded customer feedback dataset.
+The report is generated from the current customer feedback dataset.
 
 ---
 
-## Tech Stack
+## 🧠 AI Functionality
+
+LOOP uses AI to turn customer feedback into useful summaries and insights.
+
+### Ask LOOP
+
+The system:
+
+1. Receives the user's question.
+2. Loads customer feedback.
+3. Identifies relevant feedback.
+4. Uses sentiment and keyword relevance.
+5. Provides the relevant feedback as context to the AI.
+6. Generates an answer based on the available evidence.
+7. Displays supporting customer feedback.
+
+### Customer Voice Report
+
+The report workflow:
+
+1. Loads the customer feedback dataset.
+2. Provides the feedback as context to the AI.
+3. Requests a structured customer voice report.
+4. Parses the generated response.
+5. Displays the report in a structured interface.
+
+The AI prompts are designed to reduce unsupported claims by instructing the system to use the provided customer feedback as evidence.
+
+---
+
+## 🛠️ Technology Stack
 
 ### Frontend
 
@@ -96,32 +152,36 @@ The report is generated from the seeded customer feedback dataset.
 
 - Node.js
 - Express.js
-- JWT
-- bcrypt / bcryptjs
 - REST APIs
+- JWT authentication
+- bcrypt/bcryptjs authentication utilities
 
 ### AI
 
-- LOOP AI feedback analysis
-- Local Ollama integration for development
-- Rule-based customer voice report generation for the production deployment
+- AI-powered natural-language feedback analysis
+- AI-generated customer voice reports
 
 ### Deployment
 
 - Vercel
+
+### Development Tools
+
+- Visual Studio Code
+- Git
 - GitHub
 
 ---
 
-## Project Structure
+## 🏗️ Project Structure
 
 ```text
 Project-LOOP/
 │
 ├── backend/
 │   ├── server.js
-│   ├── users.json
 │   ├── feedback.json
+│   ├── users.json
 │   └── package.json
 │
 ├── frontend/
@@ -129,8 +189,8 @@ Project-LOOP/
 │   │   ├── App.jsx
 │   │   └── ...
 │   ├── package.json
-│   └── vite.config.js
+│   └── ...
 │
+├── README.md
 ├── vercel.json
-├── .gitignore
-└── README.md
+└── .gitignore
